@@ -1,0 +1,4 @@
+chromadb
+langchain-text-splitters
+unstructured
+"unstructured[all-docs]"
