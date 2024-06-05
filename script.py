@@ -74,7 +74,7 @@ def process_document(local_path):
     else:
         return None
 
-def setup_query_chain(vector_db, llm_model="orca-mini"):
+def setup_query_chain(vector_db, llm_model="phi3"):
     llm = ChatOllama(model=llm_model)
     retriever = prepare_query_retriever(vector_db, llm)
     chain = prepare_rag_chain(retriever, llm)
