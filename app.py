@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request, flash, redirect
-from script import process_document, setup_query_chain  # Import the new functions
+from script import process_document, setup_query_chain  
 import os
 
 app = Flask(__name__)
 app.secret_key = 'denil@123'
 
-# Ensure the 'uploads' directory exists
+
 if not os.path.exists('uploads'):
     os.makedirs('uploads')
 
