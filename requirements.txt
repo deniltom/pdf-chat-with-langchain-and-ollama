@@ -5,3 +5,6 @@ chromadb
 langchain-text-splitters
 unstructured
 "unstructured[all-docs]"
+deep-translator
+SpeechRecognition
+pyttsx3
