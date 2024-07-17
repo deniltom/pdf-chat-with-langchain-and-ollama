@@ -50,26 +50,61 @@
             background-color: #0056b3;
             border-color: #0056b3;
         }
+        .fetching-message {
+            display: none;
+            font-size: 1rem;
+            color: #007bff;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .fetching {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Query PDF</h1>
-        <form action="/result" method="post" class="mt-4">
+        <form action="/result" method="post" class="mt-4" id="queryForm">
             <input type="hidden" name="file_path" value="{{ file_path }}">
             <div class="form-group">
                 <label for="question">Enter your question:</label>
                 <input type="text" class="form-control" name="question" id="question">
             </div>
             <button type="submit" class="btn btn-primary btn-block">Submit</button>
+            <!-- Fetching message -->
+            <div class="fetching-message" id="fetchingMessage">Fetching results...</div>
         </form>
+        <button class="btn btn-secondary btn-block" onclick="recordVoice()">Record Voice</button>
     </div>
 
     <!-- Bootstrap JS, Popper.js, and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript for fetching message -->
+    <script>
+        $(document).ready(function(){
+            $('#queryForm').submit(function(){
+                $('#fetchingMessage').addClass('fetching'); // Show fetching message
+            });
+        });
+
+        function recordVoice() {
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'ml-IN'; // Set the language to Malayalam
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('question').value = transcript;
+                document.getElementById('queryForm').submit();
+            };
+
+            recognition.onerror = function(event) {
+                alert('Error occurred in recognition: ' + event.error);
+            };
+        }
+    </script>
 </body>
 </html>
-
-
