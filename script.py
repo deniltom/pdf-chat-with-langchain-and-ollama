@@ -8,9 +8,11 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_community.chat_models import ChatOllama
 from langchain_core.runnables import RunnablePassthrough
 from langchain.retrievers.multi_query import MultiQueryRetriever
+from deep_translator import GoogleTranslator  # Add deep-translator for translation
 
 app = Flask(__name__)
 app.secret_key = 'denil@123'
+translator = GoogleTranslator(source='auto', target='en')  # Initialize the translator
 
 def load_document(local_path):
     if local_path:
@@ -74,7 +76,7 @@ def process_document(local_path):
     else:
         return None
 
-def setup_query_chain(vector_db, llm_model="phi3"):
+def setup_query_chain(vector_db, llm_model="llama3"):
     llm = ChatOllama(model=llm_model)
     retriever = prepare_query_retriever(vector_db, llm)
     chain = prepare_rag_chain(retriever, llm)
@@ -110,11 +112,20 @@ def query():
 def answer():
     if request.method == 'POST':
         user_question = request.form['question']
+        
+        # Detect and translate question to English if needed
+        translated_question = translator.translate(user_question)
+
         vector_db = app.config.get('VECTOR_DB')
         if vector_db:
             chain = setup_query_chain(vector_db)
-            response = chain.invoke(user_question)
-            return render_template('result.html', response=response)
+            response = chain.invoke(translated_question)
+            
+            # Translate response back to Malayalam
+            translator.target = 'ml'  # Change target language to Malayalam
+            translated_response = translator.translate(response)
+
+            return render_template('result.html', response=translated_response)
         else:
             flash('Vector database not found, please upload a document first')
             return redirect('/')
@@ -122,7 +133,6 @@ def answer():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
 
 
 
